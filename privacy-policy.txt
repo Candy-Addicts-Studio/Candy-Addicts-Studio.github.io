@@ -1,0 +1,50 @@
+Privacy Policy for Real Camera
+
+Effective Date: September 13, 2026
+
+Developer: Candy Addicts Studio
+
+This Privacy Policy explains how Real Camera ("we," "our," or "the App"), developed by Candy Addicts Studio, handles your information. We respect your privacy and are committed to protecting it through complete transparency.
+1. Zero Data Collection & Storage
+
+Real Camera operates with a strict no-data-collection model:
+
+    No Data Transmitted: We do not collect, transmit, store, or share any personal information, device data, photos, videos, or audio recordings.
+
+    No Server Infrastructure: The App operates entirely on your local device. We do not own, operate, or use any remote servers to process or store your media.
+
+    No User Accounts: You are not required to create an account, log in, or provide any personal details to use the App.
+
+2. Device Permissions
+
+To function as a camera app, Real Camera requests access to specific hardware features on your device. These permissions are used exclusively on-device to provide core functionality:
+
+    Camera Permission: Required to capture photos and record videos within the App.
+
+    Microphone Permission: Required to capture audio alongside video recordings.
+
+    Storage / Photos Permission: Required to save captured photos and videos directly to your device's media gallery.
+
+    Note: Captured photos, videos, and audio clips never leave your device unless you explicitly share them yourself using third-party apps on your phone.
+
+3. Third-Party Services & Analytics
+
+Real Camera does not integrate any third-party SDKs, services, or APIs. This means:
+
+    No advertising networks (e.g., AdMob).
+
+    No third-party analytics or tracking tools (e.g., Firebase, Google Analytics).
+
+    No crash reporting tools that collect telemetry data.
+
+4. Children’s Privacy
+
+Real Camera is suitable for a general audience of all ages. Because the App collects no personal information whatsoever from any user, it fully complies with global privacy regulations, including the Children’s Online Privacy Protection Act (COPPA) and General Data Protection Regulation (GDPR).
+5. Changes to This Privacy Policy
+
+We may update our Privacy Policy from time to time. However, because our core commitment to zero data collection will not change, any updates will simply serve to clarify our existing practices or ensure compliance with updated app store guidelines.
+6. Contact Us
+
+If you have any questions, feedback, or concerns regarding this Privacy Policy or the App, please reach out to us via our official GitHub page:
+
+    GitHub Organization: https://github.com/Candy-Addicts-Studio
