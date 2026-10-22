@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tap any Chinese word on your Android screen for an instant MDBG-powered dictionary definition.">
+  <meta name="theme-color" content="#58cc02">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/app-icon.png">
+  <link rel="apple-touch-icon" href="assets/app-icon.png">
+  <title>Chinese Reader | Read Chinese anywhere</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    /* OD-LAYOUT-PRIMITIVES v1 - structure only: display, flex/grid, overflow, wrapping, ratio. */
+    @layer od-layout {
+      :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
+      .od-stack { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
+      .od-row { display: flex; align-items: center; gap: var(--od-gap, 8px); }
+      .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
+      .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
+      .od-fill { flex: 1 1 0; min-width: 0; }
+      .od-fixed { flex: none; }
+      .od-grid { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
+      .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
+      :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
+      .od-tile { display: grid; grid-template-rows: auto 1fr; }
+      :where(.od-tile) > :where(*) { display: block; }
+      .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
+      .od-media-cover { object-fit: cover; }
+      .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+      .od-clamp-2 { -webkit-line-clamp: 2; }
+      .od-clamp-3 { -webkit-line-clamp: 3; }
+      .od-lines-2 { min-height: calc(2 * 1.4em); }
+      .od-nowrap { white-space: nowrap; }
+      .od-keep { word-break: keep-all; overflow-wrap: anywhere; }
+      .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+      .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+      .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
+      .od-rail::-webkit-scrollbar { display: none; }
+      :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
+      :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
+      .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
+      .od-touch { min-width: 44px; min-height: 44px; }
+    }
+    /* /OD-LAYOUT-PRIMITIVES v1 */
+
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --surface: #f7f7f7;
+      --surface-strong: #e5e5e5;
+      --surface-green: #dbf8c5;
+      --fg: #303033;
+      --fg-2: #4f5055;
+      --muted: #696a70;
+      --meta: #77787e;
+      --border: #dedfe3;
+      --border-strong: #b7b8bd;
+      --accent: #58cc02;
+      --accent-hover: #69dc0a;
+      --accent-active: #449c05;
+      --accent-on: #173009;
+      --info: #0875a8;
+      --info-soft: #d8f2ff;
+      --danger: #c93636;
+      --warn: #ffc800;
+      --modal: #2d2e31;
+      --modal-fg: #f7f7f7;
+      --shadow-neutral: #d0d1d5;
+      --scrim: rgba(25, 26, 29, 0.58);
+      --font-display: ui-rounded, "SF Pro Rounded", "Segoe UI Rounded", "Arial Rounded MT Bold", system-ui, sans-serif;
+      --font-body: "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.5rem;
+      --text-2xl: 2rem;
+      --text-3xl: clamp(2.4rem, 5.3vw, 4.9rem);
+      --leading-body: 1.65;
+      --leading-tight: 1.04;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --space-20: 80px;
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+      --motion-fast: 180ms;
+      --motion-base: 320ms;
+      --ease-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --container: 1180px;
+    }
+
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #191a1d;
+      --surface: #242529;
+      --surface-strong: #303136;
+      --surface-green: #213b19;
+      --fg: #f4f4f1;
+      --fg-2: #dddeda;
+      --muted: #b8b9b6;
+      --meta: #a4a5a3;
+      --border: #3c3d42;
+      --border-strong: #5c5d63;
+      --accent-hover: #68dc0a;
+      --accent-on: #142d08;
+      --info: #62c9f7;
+      --info-soft: #15384a;
+      --shadow-neutral: #111215;
+      --scrim: rgba(8, 9, 11, 0.72);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #191a1d;
+        --surface: #242529;
+        --surface-strong: #303136;
+        --surface-green: #213b19;
+        --fg: #f4f4f1;
+        --fg-2: #dddeda;
+        --muted: #b8b9b6;
+        --meta: #a4a5a3;
+        --border: #3c3d42;
+        --border-strong: #5c5d63;
+        --accent-hover: #68dc0a;
+        --accent-on: #142d08;
+        --info: #62c9f7;
+        --info-soft: #15384a;
+        --shadow-neutral: #111215;
+        --scrim: rgba(8, 9, 11, 0.72);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: var(--leading-body);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: var(--info); }
+    img { max-width: 100%; }
+    h1, h2, h3, p { margin: 0; }
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: var(--leading-tight);
+    }
+    h1 { max-width: 10ch; font-size: var(--text-3xl); }
+    h2 { max-width: 14ch; font-size: clamp(2.1rem, 4.4vw, 4rem); }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); letter-spacing: -0.015em; }
+    p { max-width: 68ch; }
+    ::selection { background: var(--accent); color: var(--accent-on); }
+
+    .skip-link {
+      position: fixed;
+      z-index: 100;
+      top: var(--space-3);
+      left: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-sm);
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-160%);
+      transition: transform var(--motion-fast) ease-out;
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    .container {
+      width: min(100% - 40px, var(--container));
+      margin-inline: auto;
+    }
+
+    .site-header {
+      position: sticky;
+      z-index: 40;
+      top: 0;
+      background: color-mix(in srgb, var(--bg) 94%, transparent);
+      border-bottom: 2px solid var(--border);
+    }
+    .nav-shell {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-5);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--fg);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: block;
+      flex: none;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.4vw, 32px);
+      margin-left: auto;
+    }
+    .nav-links a {
+      color: var(--fg-2);
+      text-decoration: none;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+    .theme-button {
+      min-width: 116px;
+      min-height: 44px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--fg);
+      box-shadow: 0 3px 0 var(--shadow-neutral);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: var(--text-sm);
+      font-weight: 800;
+      transition: transform var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) ease-out;
+    }
+    .theme-button:active { transform: translateY(3px); box-shadow: none; }
+
+    .btn {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 22px;
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: transform var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) ease-out, box-shadow var(--motion-fast) ease-out;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-on);
+      box-shadow: 0 5px 0 var(--accent-active);
+    }
+    .btn-primary:active { transform: translateY(5px); box-shadow: none; }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--fg);
+      border-color: var(--border);
+      box-shadow: 0 4px 0 var(--shadow-neutral);
+    }
+    .btn-secondary:active { transform: translateY(4px); box-shadow: none; }
+    :focus-visible {
+      outline: 4px solid color-mix(in srgb, var(--info) 54%, transparent);
+      outline-offset: 4px;
+    }
+
+    .hero {
+      min-height: calc(100dvh - 72px);
+      display: grid;
+      align-items: center;
+      padding-block: clamp(40px, 7vh, 72px);
+      overflow: clip;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(300px, 0.98fr);
+      align-items: center;
+      gap: clamp(40px, 7vw, 100px);
+    }
+    .hero-copy { display: grid; gap: var(--space-6); }
+    .hero-lead {
+      max-width: 31rem;
+      color: var(--fg-2);
+      font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+      line-height: 1.58;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+    .hero-visual {
+      position: relative;
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: minmax(230px, 312px) minmax(140px, 180px);
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 4vw, 40px);
+      padding: clamp(24px, 4vw, 40px);
+      border: 3px solid var(--accent-active);
+      border-radius: var(--radius-lg);
+      background: var(--surface-green);
+      box-shadow: 0 8px 0 var(--accent-active);
+    }
+    .phone-shot {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      margin: 0;
+      padding: 8px;
+      border: 3px solid var(--fg);
+      border-radius: 35px;
+      background: var(--fg);
+      box-shadow: 0 7px 0 var(--fg);
+    }
+    .phone-shot img {
+      border-radius: 26px;
+      background: var(--surface);
+    }
+    .hero-proof {
+      display: grid;
+      gap: var(--space-1);
+      align-content: end;
+      padding-block: var(--space-4);
+      color: var(--fg);
+    }
+    .hero-proof-label {
+      display: block;
+      margin-bottom: var(--space-3);
+      color: var(--muted);
+      font-size: var(--text-sm);
+      font-weight: 750;
+    }
+    .hero-proof strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1;
+    }
+    .hero-proof span:not(.hero-proof-label) { display: block; }
+    .hero-proof .hero-pinyin { color: var(--fg-2); font-size: var(--text-lg); }
+    .hero-proof .hero-meaning { margin-top: var(--space-3); font-weight: 750; }
+
+    .facts {
+      border-block: 2px solid var(--border);
+      background: var(--surface);
+    }
+    .fact-grid {
+      display: grid;
+      grid-template-columns: 0.75fr 0.75fr 1.5fr;
+    }
+    .fact {
+      min-height: 128px;
+      display: grid;
+      align-content: center;
+      gap: var(--space-1);
+      padding: var(--space-6) clamp(16px, 3vw, 36px);
+    }
+    .fact + .fact { border-left: 2px solid var(--border); }
+    .fact strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.4vw, 1.9rem);
+      line-height: 1.1;
+    }
+    .fact span { display: block; color: var(--muted); }
+
+    .section { padding-block: clamp(72px, 10vw, 128px); }
+    .section-heading { display: grid; gap: var(--space-4); margin-bottom: clamp(40px, 6vw, 72px); }
+    .section-heading p { color: var(--muted); font-size: var(--text-lg); }
+
+    .demo-layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.82fr) minmax(320px, 1.18fr);
+      align-items: center;
+      gap: clamp(36px, 7vw, 96px);
+    }
+    .demo-stage-wrap { display: grid; justify-items: center; gap: var(--space-6); }
+    .demo-stage {
+      position: relative;
+      width: min(100%, 390px);
+      border: 3px solid var(--fg);
+      border-radius: 34px;
+      background: var(--fg);
+      box-shadow: 0 10px 0 var(--shadow-neutral);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .demo-stage > img { width: 100%; background: var(--surface); }
+    .definition-card {
+      position: absolute;
+      z-index: 3;
+      left: 6%;
+      right: 6%;
+      bottom: 8%;
+      min-height: 34%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: var(--space-4);
+      padding: clamp(16px, 4vw, 24px);
+      border: 2px solid color-mix(in srgb, var(--modal-fg) 16%, transparent);
+      border-radius: var(--radius-lg);
+      background: var(--modal);
+      color: var(--modal-fg);
+      box-shadow: 0 8px 0 color-mix(in srgb, var(--modal) 72%, #111215);
+    }
+    .definition-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+    .definition-word { display: grid; gap: var(--space-2); }
+    .definition-hanzi { display: block; font-size: clamp(2rem, 6vw, 3rem); line-height: 1; }
+    .definition-pinyin { display: block; color: color-mix(in srgb, var(--modal-fg) 78%, transparent); font-size: var(--text-lg); }
+    .definition-close {
+      min-width: 64px;
+      min-height: 44px;
+      border: 2px solid color-mix(in srgb, var(--modal-fg) 30%, transparent);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--modal-fg);
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .definition-list { margin: 0; padding-left: 1.3rem; font-size: clamp(0.95rem, 2.7vw, 1.15rem); line-height: 1.45; }
+    .definition-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .definition-source { display: block; color: color-mix(in srgb, var(--modal-fg) 70%, transparent); font-size: var(--text-xs); }
+    .definition-nav { display: flex; gap: var(--space-2); }
+    .definition-nav button {
+      min-height: 44px;
+      padding-inline: var(--space-3);
+      border: 2px solid color-mix(in srgb, var(--modal-fg) 30%, transparent);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--modal-fg);
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .definition-skeleton { display: none; align-content: center; gap: var(--space-3); }
+    .definition-skeleton span { display: block; height: 14px; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--modal-fg) 22%, transparent); animation: pulse 620ms ease-in-out infinite alternate; }
+    .definition-skeleton span:nth-child(1) { width: 46%; }
+    .definition-skeleton span:nth-child(2) { width: 86%; }
+    .definition-skeleton span:nth-child(3) { width: 66%; }
+    .definition-card.is-loading .definition-top,
+    .definition-card.is-loading .definition-list,
+    .definition-card.is-loading .definition-foot { display: none; }
+    .definition-card.is-loading .definition-skeleton { display: grid; }
+    .definition-card[hidden], .definition-reopen[hidden] { display: none; }
+    .definition-reopen {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: 12%;
+      transform: translateX(-50%);
+    }
+    .word-switcher {
+      width: min(100%, 520px);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+    .word-option {
+      min-height: 72px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: var(--space-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      box-shadow: 0 4px 0 var(--shadow-neutral);
+      cursor: pointer;
+      transition: transform var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) ease-out, background-color var(--motion-fast) ease-out;
+    }
+    .word-option span { display: block; }
+    .word-option .hanzi { font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; }
+    .word-option .pinyin { color: var(--muted); font-size: var(--text-xs); }
+    .word-option[aria-pressed="true"] { transform: translateY(4px); border-color: var(--accent-active); background: var(--surface-green); box-shadow: none; }
+    .demo-copy { display: grid; gap: var(--space-6); }
+    .demo-copy > p { color: var(--muted); font-size: var(--text-lg); }
+    .benefit-list { display: grid; gap: 0; }
+    .benefit {
+      display: grid;
+      grid-template-columns: minmax(130px, 0.42fr) 1fr;
+      gap: var(--space-6);
+      padding-block: var(--space-5);
+      border-bottom: 2px solid var(--border);
+    }
+    .benefit:first-child { border-top: 2px solid var(--border); }
+    .benefit strong { font-family: var(--font-display); font-size: 1.05rem; }
+    .benefit span { color: var(--muted); }
+
+    .focus-section {
+      background: var(--accent);
+      color: var(--accent-on);
+      border-block: 3px solid var(--accent-active);
+    }
+    .focus-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1.15fr);
+      align-items: center;
+      gap: clamp(48px, 9vw, 120px);
+    }
+    .focus-copy { display: grid; gap: var(--space-5); }
+    .focus-copy p { max-width: 31rem; font-size: var(--text-lg); font-weight: 650; }
+    .sentence-board {
+      display: grid;
+      gap: var(--space-5);
+      padding: clamp(24px, 5vw, 48px);
+      border: 3px solid var(--accent-on);
+      border-radius: var(--radius-lg);
+      background: var(--bg);
+      color: var(--fg);
+      box-shadow: 0 8px 0 var(--accent-active);
+    }
+    .sentence {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: baseline;
+      font-family: var(--font-display);
+      font-size: clamp(1.7rem, 4.2vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+    .sentence-word {
+      display: inline-block;
+      padding-inline: var(--space-2);
+      border-radius: var(--radius-sm);
+    }
+    .sentence-word.is-picked { background: var(--warn); color: #303033; box-shadow: 0 4px 0 color-mix(in srgb, var(--warn) 72%, #303033); }
+    .word-note { display: grid; gap: 2px; padding-top: var(--space-4); border-top: 2px solid var(--border); }
+    .word-note strong { display: block; font-family: var(--font-display); font-size: var(--text-xl); }
+    .word-note span { display: block; color: var(--muted); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6);
+      align-items: start;
+    }
+    .gallery-side { display: contents; }
+    .media-figure { margin: 0; display: grid; gap: var(--space-4); }
+    .media-frame {
+      padding: var(--space-2);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: 0 4px 0 var(--shadow-neutral);
+    }
+    .media-frame img { border-radius: var(--radius-sm); background: var(--surface-strong); }
+    .media-figure figcaption { display: grid; gap: var(--space-1); }
+    .media-figure figcaption strong { display: block; font-family: var(--font-display); font-size: var(--text-lg); }
+    .media-figure figcaption span { display: block; color: var(--muted); }
+
+    .final-panel {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: var(--space-8);
+      padding: clamp(32px, 7vw, 72px);
+      border: 3px solid var(--accent-active);
+      border-radius: var(--radius-lg);
+      background: var(--surface-green);
+      box-shadow: 0 8px 0 var(--accent-active);
+    }
+    .final-copy { display: grid; gap: var(--space-4); }
+    .final-copy p { color: var(--fg-2); font-size: var(--text-lg); }
+    .android-label {
+      display: grid;
+      gap: 0;
+      min-width: 180px;
+      padding: var(--space-5);
+      border: 2px solid var(--fg);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      box-shadow: 0 5px 0 var(--fg);
+    }
+    .android-label strong { display: block; font-family: var(--font-display); font-size: var(--text-xl); }
+    .android-label span { display: block; color: var(--muted); }
+
+    .site-footer {
+      padding-block: var(--space-12);
+      border-top: 2px solid var(--border);
+    }
+    .footer-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); }
+    .footer-copy { color: var(--muted); font-size: var(--text-sm); }
+    .footer-links { display: flex; flex-wrap: wrap; gap: var(--space-5); }
+    .footer-links a { font-weight: 750; }
+
+    dialog {
+      width: min(calc(100% - 32px), 520px);
+      padding: 0;
+      border: 3px solid var(--fg);
+      border-radius: var(--radius-lg);
+      background: var(--bg);
+      color: var(--fg);
+      box-shadow: 0 10px 0 var(--accent-active);
+    }
+    dialog::backdrop { background: var(--scrim); }
+    .dialog-body { display: grid; gap: var(--space-5); padding: clamp(24px, 6vw, 40px); }
+    .dialog-body h2 { font-size: clamp(2rem, 7vw, 3rem); }
+    .dialog-body p { color: var(--muted); }
+    .dialog-actions { display: flex; justify-content: flex-end; }
+
+    .js .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 360ms ease-out, transform 360ms var(--ease-standard);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+    .js .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    @keyframes pulse { from { opacity: 0.35; } to { opacity: 0.9; } }
+    @keyframes dialog-in {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    dialog[open] { animation: dialog-in 220ms ease-out both; }
+
+    @media (hover: hover) {
+      a:hover { text-decoration-thickness: 2px; text-underline-offset: 4px; }
+      .nav-links a:hover { color: var(--accent-active); }
+      .theme-button:hover { border-color: var(--border-strong); }
+      .btn-primary:hover { background: var(--accent-hover); text-decoration: none; }
+      .btn-secondary:hover { border-color: var(--border-strong); text-decoration: none; }
+    }
+
+    @media (min-width: 1440px) {
+      .container { width: min(100% - 96px, var(--container)); }
+      .hero-grid { gap: 112px; }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr); gap: var(--space-10); }
+      .hero-visual { min-height: 580px; }
+    }
+
+    @media (max-width: 768px) {
+      .container { width: min(100% - 32px, var(--container)); }
+      .nav-links { display: none; }
+      .theme-button { min-width: 104px; }
+      .hero { min-height: auto; padding-block: var(--space-12) var(--space-16); }
+      .hero-grid, .demo-layout, .focus-grid { grid-template-columns: 1fr; }
+      .hero-copy { justify-items: start; }
+      h1 { max-width: 11ch; }
+      .hero-visual { min-height: auto; max-width: 620px; margin-inline: auto; }
+      .fact-grid { grid-template-columns: 1fr 1fr; }
+      .fact:last-child { grid-column: 1 / -1; border-top: 2px solid var(--border); border-left: 0; }
+      .demo-copy { order: -1; }
+      .demo-stage { width: min(100%, 380px); }
+      .focus-grid { gap: var(--space-10); }
+      .gallery-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(260px, 72vw);
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        padding: 4px 4px var(--space-4);
+      }
+      .media-figure { scroll-snap-align: start; }
+      .final-panel { grid-template-columns: 1fr; align-items: start; }
+      .android-label { width: fit-content; }
+    }
+
+    @media (max-width: 540px) {
+      .brand span:last-child { display: none; }
+      .theme-button { min-width: 100px; font-size: 0.78rem; }
+      .hero-actions { width: 100%; }
+      .hero-actions .btn { width: 100%; }
+      .hero-visual { grid-template-columns: 1fr; justify-items: center; gap: var(--space-4); padding: var(--space-5); }
+      .phone-shot { width: min(76vw, 270px); }
+      .hero-proof { width: 100%; grid-template-columns: minmax(0, auto) 1fr; column-gap: var(--space-4); align-items: baseline; padding-block: 0; }
+      .hero-proof-label { grid-column: 1 / -1; margin-bottom: 0; }
+      .hero-proof strong { font-size: 2.6rem; }
+      .hero-proof .hero-meaning { grid-column: 1 / -1; margin-top: 0; }
+      .fact-grid { grid-template-columns: 1fr; }
+      .fact + .fact, .fact:last-child { grid-column: auto; border-top: 2px solid var(--border); border-left: 0; }
+      .section { padding-block: var(--space-16); }
+      .word-switcher { width: calc(100vw - 32px); overflow-x: auto; grid-template-columns: repeat(3, 132px); padding: 4px 4px 8px; }
+      .definition-card { left: 4%; right: 4%; bottom: 5%; min-height: 38%; }
+      .definition-foot { align-items: flex-end; }
+      .definition-source { max-width: 14ch; }
+      .benefit { grid-template-columns: 1fr; gap: var(--space-2); }
+      .gallery-grid { grid-auto-columns: minmax(248px, 84vw); }
+      .footer-row { align-items: flex-start; flex-direction: column; }
+      .dialog-actions .btn { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition-duration: 0.001ms !important; }
+      .js .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="container nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Chinese OCR home">
+        <img class="brand-mark" src="assets/app-icon.png" width="512" height="512" alt="">
+        <span>Chinese OCR</span>
+      </a>
+      <div class="nav-links">
+        <a href="#demo">How it works</a>
+        <a href="#anywhere">Where it works</a>
+        <a href="#dictionary">Dictionary</a>
+      </div>
+      <button class="theme-button od-touch" id="themeButton" type="button" aria-label="Change color theme">Theme: System</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <h1>Read Chinese anywhere.</h1>
+          <p class="hero-lead">Tap any Chinese word on screen for an instant definition, even inside subtitles, games, and images.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="downloadButton" type="button">Get it for Android</button>
+            <a class="btn btn-secondary" href="#demo">See it in action</a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" aria-label="Chinese OCR shown over video content">
+          <figure class="phone-shot">
+            <img class="od-media" src="assets/app-video.jpg" width="1280" height="2607" alt="Android video screen showing an MDBG-powered popup definition for the Chinese word 爆炸">
+          </figure>
+          <div class="hero-proof" aria-hidden="true">
+            <span class="hero-proof-label">Word found</span>
+            <strong lang="zh-Hans">爆炸</strong>
+            <span class="hero-pinyin">bàozhà</span>
+            <span class="hero-meaning">to explode</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="facts" aria-label="Product facts">
+      <div class="container fact-grid">
+        <div class="fact">
+          <strong>Free</strong>
+          <span>Free to use</span>
+        </div>
+        <div class="fact">
+          <strong>Android</strong>
+          <span>Made for Android screens</span>
+        </div>
+        <div class="fact" id="dictionary">
+          <strong>Dictionary data by <a href="https://www.mdbg.net/" target="_blank" rel="noopener noreferrer">MDBG.net</a></strong>
+          <span>Word meanings, pinyin, and useful definitions</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="demo">
+      <div class="container demo-layout">
+        <div class="demo-stage-wrap reveal">
+          <div class="demo-stage">
+            <img class="od-media" id="demoImage" src="assets/app-subtitles.jpg" width="1280" height="2616" alt="Android screen showing Chinese subtitles and a popup dictionary">
+            <article class="definition-card" id="definitionCard" tabindex="-1" aria-live="polite" aria-busy="false">
+              <div class="definition-top">
+                <div class="definition-word">
+                  <strong class="definition-hanzi" id="definitionHanzi">挑战</strong>
+                  <span class="definition-pinyin" id="definitionPinyin">tiǎozhàn</span>
+                </div>
+                <button class="definition-close" id="definitionClose" type="button">Close</button>
+              </div>
+              <ul class="definition-list" id="definitionList">
+                <li>to challenge</li>
+                <li>to take on a challenge</li>
+              </ul>
+              <div class="definition-foot">
+                <span class="definition-source">Definitions powered by MDBG</span>
+                <div class="definition-nav">
+                  <button id="previousWord" type="button">Previous</button>
+                  <button id="nextWord" type="button">Next</button>
+                </div>
+              </div>
+              <div class="definition-skeleton" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+            </article>
+            <button class="btn btn-primary definition-reopen" id="definitionReopen" type="button" hidden="">Show definition</button>
+          </div>
+
+          <div class="word-switcher" role="group" aria-label="Choose a Chinese word">
+            <button class="word-option" type="button" data-word="0" aria-pressed="true">
+              <span class="hanzi">Bilibili</span>
+              <span class="pinyin">哔哩哔哩</span>
+            </button>
+            <button class="word-option" type="button" data-word="1" aria-pressed="false">
+              <span class="hanzi">Douyin</span>
+              <span class="pinyin">抖音</span>
+            </button>
+            <button class="word-option" type="button" data-word="2" aria-pressed="false">
+              <span class="hanzi">Youtube</span>
+              
+            </button>
+          </div>
+        </div>
+
+        <div class="demo-copy reveal">
+          <h2>Tap a word to open the dictionary.</h2>
+          <p>The definition appears over what you are watching in a popup.</p>
+          <div class="benefit-list">
+            <div class="benefit">
+              <strong>If you see it, you can read it</strong>
+              <span>OCR finds Chinese even when it is not selectable text: games, video subtitles, and more.</span>
+            </div>
+            
+            <div class="benefit">
+              <strong>Read and return</strong>
+              <span>Check pinyin and meaning, then continue where you stopped. If it's a video, we'll pause it for you when you stop to read.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section focus-section">
+      <div class="container focus-grid">
+        <div class="focus-copy reveal">
+          <h2>One word at a time.</h2>
+          <p>We don't translate the whole sentence: The original Chinese stays visible so you can study just what you are missing.</p>
+        </div>
+        <div class="sentence-board reveal" aria-label="Example of selecting one Chinese word in context">
+          <div class="sentence od-keep" lang="zh-Hans">
+            <span class="sentence-word">主动</span>
+            <span class="sentence-word">参与了</span>
+            <span class="sentence-word">这次</span>
+            <span class="sentence-word is-picked">挑战</span>
+          </div>
+          <div class="word-note">
+            <strong>挑战 · tiǎozhàn</strong>
+            <span>to challenge; to take on a challenge</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="anywhere">
+      <div class="container">
+        <header class="section-heading reveal">
+          <h2>Works even if you can't copy/paste.</h2>
+          <p>Read hard-coded subtitles, comments, and game text without leaving the screen.</p>
+        </header>
+
+        <div class="gallery-grid">
+          <figure class="media-figure gallery-main reveal">
+            <div class="media-frame">
+              <img class="od-media" src="assets/app-subtitles.jpg" width="1280" height="2616" alt="Chinese OCR defining 挑战 over hard-coded subtitles in a video app">
+            </div>
+            <figcaption>
+              <strong>Hard-coded subtitles</strong>
+              <span>Look up words baked into the video frame.</span>
+            </figcaption>
+          </figure>
+
+          <div class="gallery-side">
+            <figure class="media-figure reveal">
+              <div class="media-frame">
+                <img class="od-media" src="assets/app-comments.jpg" width="1280" height="2658" alt="Chinese OCR defining 聪明 inside a social video comment">
+              </div>
+              <figcaption>
+              <strong>Comments and captions</strong>
+              <span>Pause and define a word inside social content.</span>
+              </figcaption>
+            </figure>
+
+            <figure class="media-figure reveal">
+              <div class="media-frame">
+                <img class="od-media" src="assets/app-video.jpg" width="1280" height="2607" alt="Chinese OCR defining 爆炸 over a music video interface">
+              </div>
+              <figcaption>
+              <strong>Video and game text</strong>
+              <span>Read the dialogues without pausing to switch to Pleco (sorry for the lack of a screenshot!).</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="final-panel reveal">
+          <div class="final-copy">
+            <h2>Free on Android.</h2>
+            
+          </div>
+          <div class="android-label" aria-label="Android availability">
+            <strong>Android only</strong>
+            <span>Download link not added yet</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div class="footer-copy">Chinese OCR is a free Android learning tool. Dictionary data powered by MDBG.net.</div>
+      <div class="footer-links">
+        <a href="#top">Back to top</a>
+        <a href="https://www.mdbg.net/" target="_blank" rel="noopener noreferrer">Visit MDBG.net</a>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="downloadDialog" aria-labelledby="downloadTitle">
+    <div class="dialog-body">
+      <h2 id="downloadTitle">Android link needed.</h2>
+      <p>The download link has not been added yet. This page will send learners to the official Android listing once it is available.</p>
+      <div class="dialog-actions">
+        <button class="btn btn-primary" id="dialogClose" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const themeButton = document.getElementById('themeButton');
+      const themeModes = ['system', 'light', 'dark'];
+      let themeMode = 'system';
+      try {
+        themeMode = localStorage.getItem('chinese-ocr-theme') || 'system';
+      } catch (error) {
+        themeMode = 'system';
+      }
+
+      function applyTheme(mode) {
+        themeMode = themeModes.includes(mode) ? mode : 'system';
+        if (themeMode === 'system') {
+          root.removeAttribute('data-theme');
+        } else {
+          root.setAttribute('data-theme', themeMode);
+        }
+        themeButton.textContent = 'Theme: ' + themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
+        const nextIndex = (themeModes.indexOf(themeMode) + 1) % themeModes.length;
+        const nextMode = themeModes[nextIndex];
+        themeButton.setAttribute('aria-label', 'Current theme: ' + themeMode + '. Change to ' + nextMode + '.');
+        try {
+          localStorage.setItem('chinese-ocr-theme', themeMode);
+        } catch (error) {
+          /* Theme still works for the current page when storage is unavailable. */
+        }
+      }
+
+      applyTheme(themeMode);
+      themeButton.addEventListener('click', function () {
+        const nextIndex = (themeModes.indexOf(themeMode) + 1) % themeModes.length;
+        applyTheme(themeModes[nextIndex]);
+      });
+
+      const words = [
+        {
+          hanzi: '挑战',
+          pinyin: 'tiǎozhàn',
+          meanings: ['to challenge', 'to take on a challenge'],
+          image: 'assets/app-subtitles.jpg',
+          alt: 'Android screen showing Chinese subtitles and a popup dictionary'
+        },
+        {
+          hanzi: '聪明',
+          pinyin: 'cōngming',
+          meanings: ['intelligent; clever; bright', 'acute, of sight and hearing'],
+          image: 'assets/app-comments.jpg',
+          alt: 'Android screen showing a Chinese comment and a popup dictionary'
+        },
+        {
+          hanzi: '爆炸',
+          pinyin: 'bàozhà',
+          meanings: ['explosion', 'to explode; to blow up; to detonate'],
+          image: 'assets/app-video.jpg',
+          alt: 'Android video screen showing a popup dictionary for 爆炸'
+        }
+      ];
+
+      const card = document.getElementById('definitionCard');
+      const hanzi = document.getElementById('definitionHanzi');
+      const pinyin = document.getElementById('definitionPinyin');
+      const list = document.getElementById('definitionList');
+      const demoImage = document.getElementById('demoImage');
+      const wordButtons = Array.from(document.querySelectorAll('.word-option'));
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let activeWord = 0;
+      let loadTimer;
+
+      function renderWord(index, shouldLoad) {
+        activeWord = (index + words.length) % words.length;
+        const word = words[activeWord];
+        clearTimeout(loadTimer);
+        card.hidden = false;
+        document.getElementById('definitionReopen').hidden = true;
+        wordButtons.forEach(function (button, buttonIndex) {
+          button.setAttribute('aria-pressed', String(buttonIndex === activeWord));
+        });
+
+        function commit() {
+          hanzi.textContent = word.hanzi;
+          pinyin.textContent = word.pinyin;
+          list.replaceChildren();
+          word.meanings.forEach(function (meaning) {
+            const item = document.createElement('li');
+            item.textContent = meaning;
+            list.appendChild(item);
+          });
+          demoImage.src = word.image;
+          demoImage.alt = word.alt;
+          card.classList.remove('is-loading');
+          card.setAttribute('aria-busy', 'false');
+        }
+
+        if (shouldLoad && !reduceMotion.matches) {
+          card.classList.add('is-loading');
+          card.setAttribute('aria-busy', 'true');
+          loadTimer = window.setTimeout(commit, 280);
+        } else {
+          commit();
+        }
+      }
+
+      wordButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+          renderWord(Number(button.dataset.word), true);
+        });
+      });
+      document.getElementById('previousWord').addEventListener('click', function () { renderWord(activeWord - 1, true); });
+      document.getElementById('nextWord').addEventListener('click', function () { renderWord(activeWord + 1, true); });
+      document.getElementById('definitionClose').addEventListener('click', function () {
+        card.hidden = true;
+        const reopen = document.getElementById('definitionReopen');
+        reopen.hidden = false;
+        reopen.focus({ preventScroll: true });
+      });
+      document.getElementById('definitionReopen').addEventListener('click', function () {
+        card.hidden = false;
+        this.hidden = true;
+        card.focus({ preventScroll: true });
+      });
+
+      const downloadDialog = document.getElementById('downloadDialog');
+      const downloadButton = document.getElementById('downloadButton');
+      const dialogClose = document.getElementById('dialogClose');
+      downloadButton.addEventListener('click', function () { downloadDialog.showModal(); });
+      dialogClose.addEventListener('click', function () { downloadDialog.close(); });
+      downloadDialog.addEventListener('click', function (event) {
+        if (event.target === downloadDialog) downloadDialog.close();
+      });
+
+      const revealItems = document.querySelectorAll('.reveal');
+      revealItems.forEach(function (item, index) {
+        item.style.setProperty('--reveal-delay', String((index % 3) * 45) + 'ms');
+      });
+      if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+        revealItems.forEach(function (item) { item.classList.add('is-visible'); });
+      } else {
+        const observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.16 });
+        revealItems.forEach(function (item) { observer.observe(item); });
+      }
+    }());
+  </script>
+
+
+
+</body></html>
