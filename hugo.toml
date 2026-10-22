@@ -6,5 +6,5 @@ disableKinds = ['taxonomy', 'term']
 
 [params]
   author = 'Candy Addicts Studio'
-  description = 'Candy Addicts Studio is a one-person software company building focused products including OverlayOCR and Real Camera.'
+  description = 'Candy Addicts Studio is a one-person software company building focused products.'
   github = 'https://github.com/Candy-Addicts-Studio'
