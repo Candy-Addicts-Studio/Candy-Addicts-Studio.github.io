@@ -1,0 +1,39 @@
+{{ define "main" }}
+<main id="content" class="blog-shell">
+  <section class="page-hero">
+    <div class="reading">
+      <span class="section-label">From the workbench</span>
+      <h1>Notes on building useful software.</h1>
+      <p class="lede">{{ .Description }}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="reading">
+      <div class="section-heading">
+        <h2>Latest writing</h2>
+        <p class="section-copy">Product decisions, technical tradeoffs, and lessons from making focused tools.</p>
+      </div>
+      <div class="article-list">
+        {{ range .RegularPages.ByDate.Reverse }}
+        <a class="article-card" href="{{ .RelPermalink }}">
+          <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+          <span class="article-card-copy">
+            <h3>{{ .Title }}</h3>
+            <p>{{ .Description | default .Summary }}</p>
+          </span>
+          <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+        </a>
+        {{ else }}
+        <p class="section-copy">No posts yet.</p>
+        {{ end }}
+      </div>
+      <div class="topic-strip" aria-label="Blog topics">
+        <span class="tag">Product notes</span>
+        <span class="tag">Build logs</span>
+        <span class="tag">Software craft</span>
+      </div>
+    </div>
+  </section>
+</main>
+{{ end }}

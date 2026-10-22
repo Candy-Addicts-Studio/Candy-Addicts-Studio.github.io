@@ -1,0 +1,45 @@
+{{ define "main" }}
+<main id="content" class="blog-shell">
+  <article>
+    <header class="page-hero">
+      <div class="reading">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="{{ "/" | relURL }}">Home</a><span aria-hidden="true">/</span>
+          <a href="{{ "/blog/" | relURL }}">Blog</a><span aria-hidden="true">/</span>
+          <span aria-current="page">{{ .Params.category | default "Product notes" }}</span>
+        </nav>
+        <div class="article-header">
+          <span class="section-label">{{ .Params.category | default "Product notes" }}</span>
+          <h1>{{ .Title }}</h1>
+          <p class="article-deck">{{ .Description }}</p>
+          <div class="article-meta">
+            <span>By {{ site.Params.author }}</span>
+            <time datetime="{{ .Date.Format "2006-01-02" }}">Published {{ .Date.Format "January 2, 2006" }}</time>
+            <span>{{ .ReadingTime }} minute read</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-body">
+      <div class="container article-layout">
+        <div class="prose">
+          {{ .Content }}
+          <div class="author-card">
+            <img src="{{ "icon-512.png" | relURL }}" width="512" height="512" alt="Candy Addicts Studio logo" />
+            <div>
+              <strong>Candy Addicts Studio</strong>
+              <p>A one-person company building focused software products and writing about the process.</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="toc" aria-label="On this page">
+          <strong>On this page</strong>
+          {{ .TableOfContents }}
+        </aside>
+      </div>
+    </div>
+  </article>
+</main>
+{{ end }}

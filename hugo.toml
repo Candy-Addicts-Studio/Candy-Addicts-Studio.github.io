@@ -1,2 +1,10 @@
+baseURL = 'https://candy-addicts-studio.github.io/'
 locale = 'en-us'
 title = 'Candy Addicts Studio'
+enableRobotsTXT = true
+disableKinds = ['taxonomy', 'term']
+
+[params]
+  author = 'Candy Addicts Studio'
+  description = 'Candy Addicts Studio is a one-person software company building focused products including OverlayOCR and Real Camera.'
+  github = 'https://github.com/Candy-Addicts-Studio'

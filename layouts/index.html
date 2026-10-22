@@ -1,117 +1,68 @@
-<!doctype html>
-<html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Candy Addicts Studio | Mobile App Development</title>
-    <link rel="icon" type="image/x-icon" href="icon.ico" />
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-      body {
-        font-family: "Plus Jakarta Sans", sans-serif;
-      }
-      h1,
-      h2,
-      .font-heading {
-        font-family: "Outfit", sans-serif;
-      }
-    </style>
-  </head>
-  <body
-    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white relative overflow-x-hidden"
-  >
-    <!-- Navigation Bar -->
-    <header
-      class="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between"
-    >
-      <a
-        href="#"
-        class="flex items-center gap-2 font-heading font-black text-2xl tracking-tight hover:scale-105 transition-transform"
-      >
-        <span class="text-pink-500">
-          <i data-lucide="lollipop" class="inline align-middle"></i>
-          <span class="align-middle">Candy Addicts Studio</span>
-        </span>
-      </a>
-      <a
-        href="https://github.com/Candy-Addicts-Studio"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white px-4 py-2 rounded-full text-sm font-semibold transition-all"
-      >
-        <i data-lucide="building" class="w-4 h-4"></i>
-        <span>GitHub</span>
-      </a>
-    </header>
+{{ define "main" }}
+<main id="content">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="section-label">Powered by a lot of sugar</span>
+        <h1>Software for one clear job at a time.</h1>
+        <p class="lede">I really love two things: programming and eating candy. You'll either find my hands typing or diving in a candy bag.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#products">View apps</a>
+          <a class="hero-link" href="{{ "/blog/" | relURL }}">Read the build notes <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Main Hero Section -->
-    <main
-      class="w-full max-w-4xl mx-auto px-6 py-16 md:py-24 flex-grow flex flex-col items-center justify-center text-center"
-    >
-      <!-- Main Headline -->
-      <h1
-        class="font-heading font-black text-5xl sm:text-6xl md:text-7xl leading-[1.1] tracking-tight mb-8"
-      >
-        We Build <span class="text-pink-500">Stuff</span>.
-        <br class="hidden sm:inline" />
-        Maybe <span class="text-pink-500">you'll like</span> it.
-      </h1>
-
-      <!-- Subheadline -->
-      <p class="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed">
-        Do you want to try to build something fun with us?
-      </p>
-      <p
-        class="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed mb-12"
-      >
-        Reach us out through GitHub!
-      </p>
-
-      <!-- Call To Actions -->
-      <div
-        class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
-      >
-        <a
-          href="https://github.com/Candy-Addicts-Studio"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold text-lg px-8 py-4 rounded-2xl transition-all"
-        >
-          <i data-lucide="building" class="w-5 h-5"></i>
-          <span>Explore Our GitHub</span>
+  <section class="section section-tinted" id="products">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-label">Products</span>
+        <h2>Current products</h2>
+        <p class="section-copy">Each project has its own page for details and updates.</p>
+      </div>
+      <div class="od-grid product-grid">
+        <a class="product-card" href="{{ "/overlayocr/" | relURL }}">
+          <span class="product-index" aria-hidden="true">01</span>
+          <span class="product-copy">
+            <h3>OverlayOCR</h3>
+            <p>Releases, project details, and updates for OverlayOCR.</p>
+          </span>
+          <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+        </a>
+        <a class="product-card" href="{{ "/real-camera/" | relURL }}">
+          <span class="product-index" aria-hidden="true">02</span>
+          <span class="product-copy">
+            <h3>Real Camera</h3>
+            <p>Releases, project details, and updates for Real Camera.</p>
+          </span>
+          <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
         </a>
       </div>
-    </main>
+    </div>
+  </section>
 
-    <!-- Simple Footer -->
-    <footer
-      class="w-full max-w-5xl mx-auto px-6 py-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500"
-    >
-      <p>© 2026 Candy Addicts Studio. All rights reserved.</p>
-      <div class="flex items-center gap-6">
-        <a
-          href="https://github.com/Candy-Addicts-Studio"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hover:text-slate-300 transition-colors"
-          >GitHub</a
-        >
+  <section class="section" id="writing">
+    <div class="container">
+      <div class="section-heading">
+        <span class="section-label">Writing</span>
+        <h2>Notes from the work</h2>
+        <p class="section-copy">Short posts about product decisions, tradeoffs, and what changed.</p>
       </div>
-    </footer>
-
-    <!-- Initialize Lucide Icons -->
-    <script>
-      lucide.createIcons();
-    </script>
-  </body>
-</html>
+      {{ $posts := where site.RegularPages.ByDate.Reverse "Section" "blog" }}
+      {{ range first 1 $posts }}
+      <a class="writing-card" href="{{ .RelPermalink }}">
+        <time class="article-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+        <span class="writing-card-copy">
+          <h3>{{ .Title }}</h3>
+          <p>{{ .Description | default .Summary }}</p>
+        </span>
+        <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+      </a>
+      {{ else }}
+      <p class="section-copy">The first build note is coming soon.</p>
+      {{ end }}
+    </div>
+  </section>
+</main>
+{{ end }}
