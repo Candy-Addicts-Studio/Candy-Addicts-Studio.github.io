@@ -5,7 +5,7 @@
       <div class="hero-copy">
         <span class="section-label">Powered by a lot of sugar</span>
         <h1>Software for one clear job at a time.</h1>
-        <p class="lede">I really love two things: programming and eating candy. You'll either find my hands typing or diving in a candy bag.</p>
+        <p class="lede">I really love two things: programming and eating sweets. You'll either find my hands typing or diving in a candy bag.</p>
         <div class="hero-actions">
           <a class="button button-primary" href="#products">View apps</a>
           <a class="hero-link" href="{{ "/blog/" | relURL }}">Read the build notes <span aria-hidden="true">→</span></a>
@@ -25,19 +25,19 @@
         <a class="product-card" href="{{ "/overlayocr/" | relURL }}">
           <span class="product-index" aria-hidden="true">01</span>
           <span class="product-copy">
-            <h3>OverlayOCR</h3>
-            <p>Releases, project details, and updates for OverlayOCR.</p>
+            <h3>Chinese Reader</h3>
+            <p>Releases, project details, and updates for Chinese Reader.</p>
           </span>
           <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
         </a>
-        <a class="product-card" href="{{ "/real-camera/" | relURL }}">
+        <!-- <a class="product-card" href="{{ "/real-camera/" | relURL }}">
           <span class="product-index" aria-hidden="true">02</span>
           <span class="product-copy">
             <h3>Real Camera</h3>
             <p>Releases, project details, and updates for Real Camera.</p>
           </span>
           <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
-        </a>
+        </a> -->
       </div>
     </div>
   </section>
@@ -47,7 +47,7 @@
       <div class="section-heading">
         <span class="section-label">Writing</span>
         <h2>Notes from the work</h2>
-        <p class="section-copy">Short posts about product decisions, tradeoffs, and what changed.</p>
+        <p class="section-copy">Short posts about software and my rants.</p>
       </div>
       {{ $posts := where site.RegularPages.ByDate.Reverse "Section" "blog" }}
       {{ range first 1 $posts }}

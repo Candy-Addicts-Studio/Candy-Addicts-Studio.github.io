@@ -33,9 +33,9 @@ It was quite a shocker on how widespread AI was when I came back. Everyone being
 who were super against it had gotten soft and recognized there was a place for it, a gazillion plus harnesses to use...
 a very different landscape when compared to one year ago.
 
-Do you know that tale of the frog that gets cooked alive when you slowly increase the water temperature? And if you drop
-the frog directly into boiling water, it'll jump out and survive? By no ways am I comparing my friends to the former (
-they also feel bad using this tech), but I'm relating a bit too much with the dead frog here.
+Do you know that tale that says that you can't boik a frog by throwing it in boiling water? It says that you must slowly
+turn up the water temperature with the frog in the pan, so it doesn't realize it's being boiled. I was relating a bit
+too much with one of these poor frogs. Coming back to such a different landscape was a really big shocker.
 
 I spent a few months studying the subject, and now I can say I can at least use it (last time I tried coding with it I
 could barely give it write permissions on my project directory). But I got scared at how better it had become. Better,
