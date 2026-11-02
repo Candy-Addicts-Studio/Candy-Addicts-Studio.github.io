@@ -8,3 +8,8 @@ disableKinds = ['taxonomy', 'term']
   author = 'Candy Addicts Studio'
   description = 'Candy Addicts Studio is a one-person software company building focused products.'
   github = 'https://github.com/Candy-Addicts-Studio'
+
+[[params.sitemap_static_pages]]
+  path = 'overlayocr/'
+  changefreq = 'monthly'
+  priority = 0.8
