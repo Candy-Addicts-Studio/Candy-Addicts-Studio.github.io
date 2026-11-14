@@ -46,8 +46,8 @@
     <div class="container">
       <div class="section-heading">
         <span class="section-label">Writing</span>
-        <h2>Notes from the work</h2>
-        <p class="section-copy">Short posts about software and my rants.</p>
+        <h2>Newest Post</h2>
+        <p class="section-copy">You can check out the <a href="{{ "/blog/" | relURL }}">blog section</a> to see more.</p>
       </div>
       {{ $posts := where site.RegularPages.ByDate.Reverse "Section" "blog" }}
       {{ range first 1 $posts }}
